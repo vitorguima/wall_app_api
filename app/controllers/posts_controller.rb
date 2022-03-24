@@ -9,13 +9,13 @@ class PostsController < ApplicationController
     if post.save
       render json: post, status: :created
     else
-      render json: book.errors, status: :unproccessable_entity
+      render json: post.errors, status: :unprocessable_entity
     end
   end
 
-  private
+  def delete_post
+    Post.find(params[:id]).destroy!
 
-  def post_params
-    params.require(:post).permit(:title, :content)
+    head :no_content
   end
-end
+end 
