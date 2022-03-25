@@ -2,7 +2,9 @@ module Api
   module V1
     class PostsController < ApplicationController
       def get_posts_list
-        render json: Post.all
+        posts = Post.all
+
+        render json: PostsRepresenter.new(posts).as_json
       end
     
       def create_post
