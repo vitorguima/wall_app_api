@@ -7,10 +7,8 @@ module Api
       rescue_from AuthenticationError, with: :handle_unauthenticated
 
       def create
-        email = params.require(:email)
         password = params.require(:password)
 
-        user = User.find_by!(email: email)
         raise AuthenticationError unless user.authenticate(password)
         token = AuthenticationTokenService.call(user.email)
 
@@ -18,6 +16,11 @@ module Api
       end
 
       private
+
+      def user
+        email = params.require(:email)
+        @user ||= User.find_by!(email: email)
+      end
 
       def parameter_missing(error)
         render json: { error: error.message }, status: :unprocessable_entity
