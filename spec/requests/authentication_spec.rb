@@ -2,8 +2,16 @@ require 'rails_helper'
 
 describe 'Authentication', type: :request do
   describe 'POST /authenticate' do
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+
     it 'authenticates the client' do
-      post '/api/v1/authenticate', params: { username: 'usertest', password: 'passtest' }
+      post '/api/v1/authenticate', params: { email: user.email, password: user.password }
 
       expect(response).to have_http_status(:created)
 
@@ -18,12 +26,12 @@ describe 'Authentication', type: :request do
 
       response_body = JSON.parse(response.body)
       expect(response_body).to eq({
-        'error' => 'param is missing or the value is empty: username'
+        'error' => 'param is missing or the value is empty: email'
       })
     end
 
     it 'returns error when password is missing' do
-      post '/api/v1/authenticate', params: { username: 'usertest' }
+      post '/api/v1/authenticate', params: { email: 'usertest' }
 
       expect(response).to have_http_status(:unprocessable_entity)
 
