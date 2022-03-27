@@ -8,16 +8,16 @@ describe 'Posts API', type: :request do
       
       get '/api/v1/posts'
   
-      response_content = JSON.parse(response.body)
-      response_first_item = response_content.first
-      response_second_item = response_content.second
+      response_body = JSON.parse(response.body)
+      response_first_item = response_body.first
+      response_second_item = response_body.second
   
       expect(response).to have_http_status(:success)
-      expect(response_content.size).to eq(2)
-      expect(response_first_item['title']). to eq('The Silver Logic')
-      expect(response_first_item['content']). to eq('I want to work for you')
-      expect(response_second_item['title']). to eq('TSL')
-      expect(response_second_item['content']). to eq('Am I passing the test?')
+      expect(response_body.size).to eq(2)
+      expect(response_first_item['title']).to eq('The Silver Logic')
+      expect(response_first_item['content']).to eq('I want to work for you')
+      expect(response_second_item['title']).to eq('TSL')
+      expect(response_second_item['content']).to eq('Am I passing the test?')
     end
   end
 

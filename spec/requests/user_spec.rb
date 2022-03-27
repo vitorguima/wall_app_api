@@ -1,9 +1,15 @@
 require 'rails_helper'
 
-describe 'Authentication', type: :request do
-  describe 'POST /authenticate' do
-    it 'authenticates the client' do
-      post '/api/v1/authenticate', params: { username: 'test-name', password: 'test-pass' }
+describe 'User register', type: :request do
+  describe 'POST /user' do
+    it 'Creates a new user' do
+      post '/api/v1/authenticate', params: { 
+        first_name: 'first_name',
+        last_name: 'last_name',
+        email: 'email@email.com',
+        nickname: 'nickname',
+        password: 'password'
+      }
 
       expect(response).to have_http_status(:created)
     end
