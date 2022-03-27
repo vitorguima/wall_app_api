@@ -9,6 +9,8 @@ describe 'Authentication', type: :request do
       nickname: 'Jimmo',
       password: 'Jimpass'
     ) }
+    
+    let(:token) { AuthenticationTokenService.call(user.email) }
 
     it 'authenticates the client' do
       post '/api/v1/authenticate', params: { email: user.email, password: user.password }
@@ -16,11 +18,11 @@ describe 'Authentication', type: :request do
       expect(response).to have_http_status(:created)
 
       response_body = JSON.parse(response.body)
-      expect(response_body['token']).to eq('123')
+      expect(response_body['token']).to eq(token)
     end
 
     it 'returns error when username is missing' do
-      post '/api/v1/authenticate', params: { password: 'passtest' }
+      post '/api/v1/authenticate', params: { password: user.password }
 
       expect(response).to have_http_status(:unprocessable_entity)
 
@@ -31,7 +33,7 @@ describe 'Authentication', type: :request do
     end
 
     it 'returns error when password is missing' do
-      post '/api/v1/authenticate', params: { email: 'usertest' }
+      post '/api/v1/authenticate', params: { email: user.email }
 
       expect(response).to have_http_status(:unprocessable_entity)
 
@@ -39,6 +41,15 @@ describe 'Authentication', type: :request do
       expect(response_body).to eq({
         'error' => 'param is missing or the value is empty: password'
       })
+    end
+
+    it 'returns error when password does not match' do
+      post '/api/v1/authenticate', params: { email: user.email, password: 'wrongpassword' }
+
+      expect(response).to have_http_status(:unauthorized)
+
+      # response_body = JSON.parse(response.body)
+      # expect(response_body['token']).to eq(token)
     end
   end
 end

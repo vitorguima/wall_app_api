@@ -7,4 +7,4 @@ class AuthenticationTokenService
 
     token = JWT.encode payload, HMAC_SECRET, ALGORITHM_TYPE
   end
-end
+end 
