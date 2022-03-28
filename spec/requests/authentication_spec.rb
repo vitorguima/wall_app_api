@@ -47,9 +47,6 @@ describe 'Authentication', type: :request do
       post '/api/v1/authenticate', params: { email: user.email, password: 'wrongpassword' }
 
       expect(response).to have_http_status(:unauthorized)
-
-      # response_body = JSON.parse(response.body)
-      # expect(response_body['token']).to eq(token)
     end
   end
 end
