@@ -9,11 +9,10 @@ describe 'Posts API', type: :request do
       nickname: 'Jimmo',
       password: 'Jimpass'
     ) }
+    let!(:first_post) { FactoryBot.create(:post, title: 'The Silver Logic', content: 'I want to work for you', user_id: user.id) }
+    let!(:second_post) { FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?', user_id: user.id) }
 
-    it 'returns all posts' do
-      FactoryBot.create(:post, title: 'The Silver Logic', content: 'I want to work for you', user_id: user.id)
-      FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?', user_id: user.id)
-      
+    it 'returns all posts' do  
       get '/api/v1/posts'
   
       response_body = JSON.parse(response.body)
@@ -22,24 +21,41 @@ describe 'Posts API', type: :request do
   
       expect(response).to have_http_status(:success)
       expect(response_body.size).to eq(2)
-      expect(response_first_item['title']).to eq('The Silver Logic')
-      expect(response_first_item['content']).to eq('I want to work for you')
-      expect(response_second_item['title']).to eq('TSL')
-      expect(response_second_item['content']).to eq('Am I passing the test?')
+      expect(response_first_item['title']).to eq(first_post.title)
+      expect(response_first_item['content']).to eq(first_post.content)
+      expect(response_second_item['title']).to eq(second_post.title)
+      expect(response_second_item['content']).to eq(second_post.content)
     end
   end
 
   describe 'POST /posts' do
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
+
     it 'create new post' do
       expect {
         post '/api/v1/posts', params: {
-          post: { title: 'TSL', content: 'Am I passing the test?'}
+          post: { title: 'TSL', content: 'Am I passing the test?', user_id: user.id }
         }, headers: {
-          "Authorization" => "Bearer 123"
+          "Authorization" => "Bearer #{token}"
         }
       }.to change { Post.count }.from(0).to(1)
 
       expect(response).to have_http_status(:created)
+    end
+
+    context 'missing Authorization header' do
+      it 'returns status 401' do
+        post '/api/v1/posts', params: {}, headers: {}
+
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 
@@ -51,15 +67,26 @@ describe 'Posts API', type: :request do
       nickname: 'Jimmo',
       password: 'Jimpass'
     ) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
     let!(:post) { FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?', user_id: user.id) }
 
     it 'deletes a post' do
-      post_id = post.id
       expect {
-        delete "/api/v1/posts/#{post_id}"
+        delete "/api/v1/posts/#{post.id}",
+        headers: {
+          "Authorization" => "Bearer #{token}",
+        }
       }.to change { Post.count }.from(1).to(0)
 
       expect(response).to have_http_status(:no_content)
+    end
+
+    context 'missing Authorization header' do
+      it 'returns status 401' do
+        delete "/api/v1/posts/#{post.id}", params: {}, headers: {}
+
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end
