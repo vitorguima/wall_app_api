@@ -2,44 +2,91 @@ require 'rails_helper'
 
 describe 'Posts API', type: :request do
   describe 'GET /posts' do
-    it 'returns all posts' do
-      FactoryBot.create(:post, title: 'The Silver Logic', content: 'I want to work for you')
-      FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?')
-      
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let!(:first_post) { FactoryBot.create(:post, title: 'The Silver Logic', content: 'I want to work for you', user_id: user.id) }
+    let!(:second_post) { FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?', user_id: user.id) }
+
+    it 'returns all posts' do  
       get '/api/v1/posts'
   
-      response_content = JSON.parse(response.body)
-      response_first_item = response_content.first
-      response_second_item = response_content.second
+      response_body = JSON.parse(response.body)
+      response_first_item = response_body.first
+      response_second_item = response_body.second
   
       expect(response).to have_http_status(:success)
-      expect(response_content.size).to eq(2)
-      expect(response_first_item['title']). to eq('The Silver Logic')
-      expect(response_first_item['content']). to eq('I want to work for you')
-      expect(response_second_item['title']). to eq('TSL')
-      expect(response_second_item['content']). to eq('Am I passing the test?')
+      expect(response_body.size).to eq(2)
+      expect(response_first_item['title']).to eq(first_post.title)
+      expect(response_first_item['content']).to eq(first_post.content)
+      expect(response_second_item['title']).to eq(second_post.title)
+      expect(response_second_item['content']).to eq(second_post.content)
     end
   end
 
   describe 'POST /posts' do
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
+
     it 'create new post' do
       expect {
-        post '/api/v1/posts', params: { post: { title: 'TSL', content: 'Am I passing the test?' } }
+        post '/api/v1/posts', params: {
+          post: { title: 'TSL', content: 'Am I passing the test?', user_id: user.id }
+        }, headers: {
+          "Authorization" => "Bearer #{token}"
+        }
       }.to change { Post.count }.from(0).to(1)
 
       expect(response).to have_http_status(:created)
     end
+
+    context 'missing Authorization header' do
+      it 'returns status 401' do
+        post '/api/v1/posts', params: {}, headers: {}
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
   end
 
   describe 'DELETE /posts/:id' do
-    let!(:post) { FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?') }
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
+    let!(:post) { FactoryBot.create(:post, title: 'TSL', content: 'Am I passing the test?', user_id: user.id) }
 
     it 'deletes a post' do
       expect {
-        delete "/api/v1/posts/#{post.id}"
+        delete "/api/v1/posts/#{post.id}",
+        headers: {
+          "Authorization" => "Bearer #{token}",
+        }
       }.to change { Post.count }.from(1).to(0)
 
       expect(response).to have_http_status(:no_content)
+    end
+
+    context 'missing Authorization header' do
+      it 'returns status 401' do
+        delete "/api/v1/posts/#{post.id}", params: {}, headers: {}
+
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end

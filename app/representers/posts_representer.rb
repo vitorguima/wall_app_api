@@ -9,8 +9,9 @@ class PostsRepresenter
         id: post.id,
         title: post.title,
         content: post.content,
+        author_nickname: post.user.nickname,
         created_at: post.created_at,
-        nickname: post.user.nickname,
+        updated_at: post.updated_at,
       }
     end
   end
