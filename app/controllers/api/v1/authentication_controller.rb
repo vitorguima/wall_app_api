@@ -10,7 +10,7 @@ module Api
         password = params.require(:password)
 
         raise AuthenticationError unless user.authenticate(password)
-        token = AuthenticationTokenService.call(user.email)
+        token = AuthenticationTokenService.encode(user.id)
 
         render json: { token: token }, status: :created
       end

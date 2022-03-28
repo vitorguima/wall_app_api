@@ -1,6 +1,10 @@
 module Api
   module V1
     class PostsController < ApplicationController
+      include ActionController::HttpAuthentication::Token
+
+      before_action :authenticate_user, only: [:create_post, :delete_post]
+
       def get_posts_list
         posts = Post.all
 
@@ -26,7 +30,24 @@ module Api
       private
 
       def post_params
-        params.require(:post).permit(:title, :content)
+        request_params = params.require(:post).permit(:title, :content)
+        request_params.merge(user_id: user_id)
+      end
+
+      def authenticate_user
+        # Authorization: Bearer <token>
+        User.find(user_id)
+      rescue ActiveRecord::RecordNotFound
+        render status: :unauthorized
+      end
+
+      def token
+        token, _options = token_and_options(request)
+        @token ||= token
+      end
+
+      def user_id
+        @user_id ||= AuthenticationTokenService.decode(token) unless token.nil?
       end
     end
   end
