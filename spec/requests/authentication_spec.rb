@@ -10,7 +10,7 @@ describe 'Authentication', type: :request do
       password: 'Jimpass'
     ) }
     
-    let(:token) { AuthenticationTokenService.call(user.email) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
 
     it 'authenticates the client' do
       post '/api/v1/authenticate', params: { email: user.email, password: user.password }

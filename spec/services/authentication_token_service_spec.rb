@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe AuthenticationTokenService do
-  describe '.call' do
+  describe '.decode' do
     let(:user) { FactoryBot.create(:user,
       first_name: 'Jim',
       last_name: 'Morrison',
@@ -9,7 +9,7 @@ describe AuthenticationTokenService do
       nickname: 'Jimmo',
       password: 'Jimpass'
     ) }
-    let(:token) { described_class.call(user.email) }
+    let(:token) { described_class.encode(user.id) }
 
     it 'returns an authentication token' do
       decoded_token = JWT.decode(
@@ -20,7 +20,7 @@ describe AuthenticationTokenService do
       )
 
       expect(decoded_token).to eq([
-        { 'user_email' => user.email },
+        { 'user_id' => user.id },
         { 'alg' => described_class::ALGORITHM_TYPE }
       ])
     end
