@@ -43,7 +43,7 @@ describe 'Posts API', type: :request do
         post '/api/v1/posts', params: {
           post: { title: 'TSL', content: 'Am I passing the test?', user_id: user.id }
         }, headers: {
-          "Authorization" => "Bearer #{token}"
+          'Authorization' => "Bearer #{token}"
         }
       }.to change { Post.count }.from(0).to(1)
 
