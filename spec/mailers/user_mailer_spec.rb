@@ -1,18 +1,27 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe UserMailer, type: :mailer do
-  describe "user_registered" do
-    let(:mail) { UserMailer.user_registered }
+  describe 'sent email' do
+    let(:user) { FactoryBot.create(:user,
+    first_name: 'Jim',
+    last_name: 'Morrison',
+    email: 'jim_morrison@gmail.com',
+    nickname: 'Jimmo',
+    password: 'Jimpass'
+    ) }
+    let(:email) { described_class.with(user: user).user_registered.deliver_now }
 
-    it "renders the headers" do
-      expect(mail.subject).to eq("User registered")
-      expect(mail.to).to eq(["to@example.org"])
-      expect(mail.from).to eq(["from@example.com"])
+    it 'renders the headers' do
+      expect(email.subject).to eq('Welcome to the wall app!')
+      expect(email.to).to eq(['jim_morrison@gmail.com'])
+      expect(email.from).to eq(['vitorguima@gmail.com'])
     end
 
-    it "renders the body" do
-      expect(mail.body.encoded).to match("Hi")
+    it 'renders the body' do
+      expect(email.body.encoded).to include("Welcome to the Wall app!, #{user.first_name}")
+      expect(email.body.encoded).to include("your login name is: #{user.email}")
+      expect(email.body.encoded).to include("To login to the site, just follow this link:")
+      expect(email.body.encoded).to include("Thanks for joining and have a great day!")
     end
   end
-
 end

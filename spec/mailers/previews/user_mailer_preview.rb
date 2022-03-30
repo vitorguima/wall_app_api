@@ -5,5 +5,4 @@ class UserMailerPreview < ActionMailer::Preview
   def user_registered
     UserMailer.with(user: User.first).user_registered
   end
-
 end

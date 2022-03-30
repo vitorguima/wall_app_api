@@ -31,7 +31,7 @@ describe 'User register', type: :request do
 
     it 'Deletes an existing user' do
       expect {
-        delete "/api/v1/user/#{user.id}", 
+        delete "/api/v1/user/", 
         headers: {
           'Authorization' => "Bearer #{token}",
         }
