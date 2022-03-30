@@ -18,4 +18,24 @@ describe 'User register', type: :request do
       expect(response).to have_http_status(:created)
     end
   end
+
+  describe 'DELETE /user/:id' do
+    let!(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
+
+    it 'Deletes an existing user' do
+      expect {
+        delete "/api/v1/user/#{user.id}", 
+        headers: {
+          'Authorization' => "Bearer #{token}",
+        }
+    }.to change { User.count }.from(1).to(0)
+    end
+  end
 end
