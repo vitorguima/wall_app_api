@@ -1,25 +1,14 @@
-# README
+# Wall app API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## How to run this project on your computer
 
-Things you may want to cover:
+## How does wall api works
 
-* Ruby version
+## Endpoints collection
 
-* System dependencies
+## Tests
+```bash
+rspec spec --format documentation
+```
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# wall_app_api
+## External libraries
