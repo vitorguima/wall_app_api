@@ -1,11 +1,11 @@
 class UserMailer < ApplicationMailer
-  def initialize(user)
-   @user = user
-  end
-
   def user_registered
-    @greeting = "Hello, #{user.first_name}"
+    @user = params[:user]
+    @url  = 'http://wordsonwall.com/login'
 
-    mail to: user.email
+    mail(
+      to: email_address_with_name(@user.email, @user.first_name),
+      subject: "Welcome to the wall app!"
+    )
   end
 end
