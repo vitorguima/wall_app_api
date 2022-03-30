@@ -17,9 +17,61 @@ describe 'User register', type: :request do
 
       expect(response).to have_http_status(:created)
     end
+
+    context 'email already exists' do
+      let!(:user) { FactoryBot.create(:user,
+        first_name: 'Jim',
+        last_name: 'Morrison',
+        email: 'jim_morrison@gmail.com',
+        nickname: 'Jimmoxxxxx',
+        password: 'Jimpass'
+      ) }
+
+      it 'return status 422' do
+        post '/api/v1/user', params: {
+          user: {
+            first_name: 'Jim',
+            last_name: 'Morrison',
+            email: 'jim_morrison@gmail.com',
+            nickname: 'Jimmo',
+            password: 'Jimpass'
+          }
+        }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        response_body = JSON.parse(response.body)
+        expect(response_body).to eq({'email' => ['has already been taken']})
+      end
+    end
+
+    context 'nickname already exists' do
+      let!(:user) { FactoryBot.create(:user,
+        first_name: 'Jim',
+        last_name: 'Morrison',
+        email: 'jim_morrison2@gmail.com',
+        nickname: 'Jim',
+        password: 'Jimpass'
+      ) }
+
+      it 'return status 422' do
+        post '/api/v1/user', params: {
+          user: {
+            first_name: 'Hommer',
+            last_name: 'Simpsons',
+            email: 'hommersimpsons@gmail.com',
+            nickname: 'Jim',
+            password: 'Jimpass'
+          }
+        }
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        response_body = JSON.parse(response.body)
+        expect(response_body).to eq({'nickname' => ['has already been taken']})
+      end
+    end
   end
 
-  describe 'DELETE /user/:id' do
+  describe 'DELETE /user' do
     let!(:user) { FactoryBot.create(:user,
       first_name: 'Jim',
       last_name: 'Morrison',
