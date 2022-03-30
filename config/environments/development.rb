@@ -44,10 +44,10 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { :host => 'localhost:3000', protocol: 'http' }
 
   config.action_mailer.smtp_settings = {
-    address:              'smtp.gmail.com',
+    address:              ENV['SMTP_ADDRESS'],
     port:                 587,
-    user_name:            'vitorguima@gmail.com',
-    password:             'ugoucdobimbessuu',
+    user_name:            ENV['EMAIL_SENDER'],
+    password:             ENV['EMAIL_PASSWORD'],
     authentication:       'plain',
     enable_starttls_auto: true,
   }
