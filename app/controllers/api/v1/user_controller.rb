@@ -14,7 +14,6 @@ module Api
       end
 
       def delete_user
-
         User.find(user_id).destroy!
 
         head :no_content
