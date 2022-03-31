@@ -56,7 +56,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "wall_api_production"
 
   config.action_mailer.delivery_method = :smtp
-
+  host = 'wall-app-api.herokuapp.com/'
   config.action_mailer.default_url_options = { host: host }
 
   config.action_mailer.smtp_settings = {
