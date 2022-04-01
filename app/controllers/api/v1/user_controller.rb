@@ -2,8 +2,9 @@ module Api
   module V1
     class UserController < ApplicationController
       include ActionController::HttpAuthentication::Token
+
       def create_user
-        user = User.new(user_params)
+        user = UserService.new_user(user_params)
 
         if user.save
           UserMailer.with(user: user).user_registered.deliver_later
@@ -14,7 +15,7 @@ module Api
       end
 
       def delete_user
-        User.find(user_id).destroy!
+        user = UserService.find_by_id(user_id).destroy!
 
         head :no_content
       end
