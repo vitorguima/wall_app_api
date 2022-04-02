@@ -6,13 +6,13 @@ module Api
       before_action :authenticate_user, only: [:create_post, :delete_post]
 
       def get_posts_list
-        posts = Post.all
+        posts = PostsService.get_posts()
 
         render json: PostsRepresenter.new(posts).as_json
       end
     
       def create_post
-        post = Post.new(post_params)
+        post = PostsService.new_post(post_params)
       
         if post.save
           render json: post, status: :created
@@ -22,8 +22,9 @@ module Api
       end
     
       def delete_post
-        Post.find(params[:id]).destroy!
-      
+        post = PostsService.find_by_id(params[:id]).destroy!
+        post.destroy!
+
         head :no_content
       end
 
@@ -36,7 +37,7 @@ module Api
 
       def authenticate_user
         # Authorization: Bearer <token>
-        User.find(user_id)
+        UserService.find_by_id(user_id)
       rescue ActiveRecord::RecordNotFound, JWT::DecodeError
         render status: :unauthorized
       end

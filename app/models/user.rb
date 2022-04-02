@@ -8,6 +8,8 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true
   validate :email_format
 
+  after_destroy :destroy_posts
+
   private
 
   def email_format
@@ -19,5 +21,9 @@ class User < ApplicationRecord
     else
       self.errors.add(:email, 'Invalid email format')
     end
+  end
+
+  def destroy_posts
+    self.posts.destroy_all
   end
 end
