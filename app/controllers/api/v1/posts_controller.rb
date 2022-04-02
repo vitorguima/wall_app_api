@@ -12,7 +12,7 @@ module Api
       end
     
       def create_post
-        post = PostService.new_post(post_params)
+        post = PostsService.new_post(post_params)
       
         if post.save
           render json: post, status: :created
@@ -22,8 +22,9 @@ module Api
       end
     
       def delete_post
-        Post.find(params[:id]).destroy!
-      
+        post = PostsService.find_by_id(params[:id]).destroy!
+        post.destroy!
+
         head :no_content
       end
 

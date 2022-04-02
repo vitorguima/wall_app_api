@@ -80,6 +80,11 @@ describe 'User register', type: :request do
       password: 'Jimpass'
     ) }
     let(:token) { AuthenticationTokenService.encode(user.id) }
+    let!(:first_post) { FactoryBot.create(:post,
+      title: 'The Silver Logic',
+      content: 'I want to work for you',
+      user_id: user.id
+    ) }
 
     it 'Deletes an existing user' do
       expect {
@@ -88,6 +93,15 @@ describe 'User register', type: :request do
           'Authorization' => "Bearer #{token}",
         }
     }.to change { User.count }.from(1).to(0)
+    end
+
+    it 'Deletes associated posts' do
+      expect {
+        delete "/api/v1/user/", 
+        headers: {
+          'Authorization' => "Bearer #{token}",
+        }
+    }.to change { Post.count }.from(1).to(0)
     end
   end
 end
