@@ -5,8 +5,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       get '/posts' => 'posts#get_posts_list'
       post '/posts' => 'posts#create_post'
-      delete '/posts/:id' => 'posts#delete_post'
-      put '/posts/:id' => 'posts#update_post'
+      delete '/posts/:post_id' => 'posts#delete_post'
+      put '/posts/:post_id' => 'posts#update_post'
 
       post '/user' => 'user#create_user'
       delete '/user/' => 'user#delete_user'

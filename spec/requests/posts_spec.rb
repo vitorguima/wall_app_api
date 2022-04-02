@@ -78,7 +78,7 @@ describe 'Posts API', type: :request do
         }
       }.to change { Post.count }.from(1).to(0)
 
-      expect(response).to have_http_status(:no_content)
+      expect(response).to have_http_status(:ok)
     end
 
     context 'missing Authorization header' do

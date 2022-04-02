@@ -6,33 +6,38 @@ module Api
       before_action :authenticate_user, only: [:create_post, :delete_post]
 
       def get_posts_list
-        posts = PostsService.get_posts()
-
-        render json: PostsRepresenter.new(posts).as_json
+        posts = Posts::ListService.new.call()
+        render json: posts
+      rescue Posts::ListService::InvalidError
+        render json: post.errors, status: :unprocessable_entity
       end
     
       def create_post
-        post = PostsService.new_post(post_params)
-      
-        if post.save
-          render json: post, status: :created
-        else
-          render json: post.errors, status: :unprocessable_entity
-        end
+        user = User.find(user_id)
+        post = Posts::CreateService.new.call(user, post_params)
+        render json: post, status: :created
+      rescue Posts::CreateService::InvalidError
+        render json: post.errors, status: :unprocessable_entity
       end
     
       def delete_post
-        post = PostsService.find_by_id(params[:id]).destroy!
-        post.destroy!
+        Posts::DeleteService.new.call(params[:post_id])
 
-        head :no_content
+        head :ok
+      end
+
+      def update_post
+        user = User.find(user_id)
+
+        Posts::UpdateService.new.call(user, params[:post_id], post_params)
+
+        head :ok
       end
 
       private
 
       def post_params
         request_params = params.require(:post).permit(:title, :content)
-        request_params.merge(user_id: user_id)
       end
 
       def authenticate_user
@@ -40,15 +45,6 @@ module Api
         UserService.find_by_id(user_id)
       rescue ActiveRecord::RecordNotFound, JWT::DecodeError
         render status: :unauthorized
-      end
-
-      def token
-        token, _options = token_and_options(request)
-        @token ||= token
-      end
-
-      def user_id
-        @user_id ||= AuthenticationTokenService.decode(token) unless token.nil?
       end
     end
   end
