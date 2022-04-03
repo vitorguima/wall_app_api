@@ -38,19 +38,9 @@ describe 'User register', type: :request do
           }
         }
 
-        post '/api/v1/users', params: {
-          user: {
-            first_name: 'Jim',
-            last_name: 'Morrison',
-            email: 'jim_morrison@gmail.com',
-            nickname: 'Jimmo',
-            password: 'Jimpass'
-          }
-        }
-
         expect(response).to have_http_status(:unprocessable_entity)
         response_body = JSON.parse(response.body)
-        expect(response_body).to eq({'email' => ['has already been taken']})
+        expect(response_body).to eq({ "error" => { "message" => "Validation failed: Email has already been taken" } })
       end
     end
 
@@ -76,7 +66,7 @@ describe 'User register', type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         response_body = JSON.parse(response.body)
-        expect(response_body).to eq({'nickname' => ['has already been taken']})
+        expect(response_body).to eq({ "error" => { "message" => "Validation failed: Nickname has already been taken" } })
       end
     end
   end

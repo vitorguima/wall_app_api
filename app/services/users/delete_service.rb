@@ -1,8 +1,7 @@
-module Posts
-  class UpdateService
-    def call(user, post_id, post_params)
-      post = user.posts.find(post_id)
-      post.update!(post_params)
+module Users
+  class DeleteService
+    def call(user_id)
+      User.find(user_id).destroy!
     rescue ActiveRecord::RecordInvalid => error
       raise InvalidError, error.message
     end

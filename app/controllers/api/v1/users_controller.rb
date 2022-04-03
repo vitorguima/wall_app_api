@@ -6,13 +6,14 @@ module Api
       def create_user
         user = Users::CreateService.new.call(user_params)
         render json: user, status: :created
-      rescue Users::CreateService::InvalidError
-        render json: user, status: :unprocessable_entity
+      rescue Users::CreateService::InvalidError => error
+        render_error(error, :unprocessable_entity)
       end
 
       def delete_user
-        user = UserService.find_by_id(user_id).destroy!
-
+        Users::DeleteService.new.call(user_id)
+        head :ok
+      rescue Users::DeleteService::InvalidError
         head :no_content
       end
 

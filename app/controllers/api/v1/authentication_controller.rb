@@ -19,7 +19,7 @@ module Api
 
       def user
         email = params.require(:email)
-        @user ||= User.find_by!(email: email)
+        @user ||= Users::FindService.new.by_email(email)
       end
 
       def parameter_missing(error)

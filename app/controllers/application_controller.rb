@@ -17,4 +17,8 @@ class ApplicationController < ActionController::API
   def user_id
     @user_id ||= AuthenticationTokenService.decode(token) unless token.nil?
   end
+
+  def render_error(message, status_code)
+    render json: { error: { message: message } }, status: status_code
+  end
 end

@@ -5,8 +5,8 @@ module Users
       user.save!
       UserMailer.with(user: user).user_registered.deliver_later
       user.as_json
-    rescue ActiveRecord::RecordInvalid
-      raise InvalidError, user.errors.as_json
+    rescue ActiveRecord::RecordInvalid => error
+      raise InvalidError, error.message
     end
 
     class InvalidError < StandardError; end
