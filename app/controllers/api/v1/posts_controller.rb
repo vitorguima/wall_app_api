@@ -9,7 +9,7 @@ module Api
         posts = Posts::ListService.new.call()
         render json: posts
       rescue Posts::ListService::InvalidError
-        render json: post.errors, status: :unprocessable_entity
+        render json: posts.errors, status: :unprocessable_entity
       end
     
       def create_post
