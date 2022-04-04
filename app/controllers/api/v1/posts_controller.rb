@@ -44,7 +44,7 @@ module Api
       def authenticate_user
         # Authorization: Bearer <token>
         Users::FindService.new.by_id(user_id)
-      rescue AuthenticationTokenService::InvalidError
+      rescue ActiveRecord::RecordNotFound, AuthenticationTokenService::StandardError
         render status: :unauthorized
       end
     end

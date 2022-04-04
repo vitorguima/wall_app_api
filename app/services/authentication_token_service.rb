@@ -16,9 +16,9 @@ class AuthenticationTokenService
       { algorithm: ALGORITHM_TYPE }
     )
     decoded_token[0]['user_id']
-  rescue JWT::DecodeError => error
+  rescue ActiveRecord::RecordInvalid, JWT::DecodeError => error
     raise InvalidError, error.message
   end
 
   class InvalidError < StandardError; end
-end 
+end
