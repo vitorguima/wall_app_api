@@ -3,7 +3,7 @@ module Api
     class PostsController < ApplicationController
       include ActionController::HttpAuthentication::Token
 
-      before_action :authenticate_user, only: [:create_post, :delete_post]
+      before_action :authenticate_user, only: [:create_post, :delete_post, :update_post]
 
       def get_posts_list
         posts = Posts::ListService.new.call()

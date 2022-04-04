@@ -89,4 +89,39 @@ describe 'Posts API', type: :request do
       end
     end
   end
+  
+  describe 'PUT /posts/:id' do
+    let(:user) { FactoryBot.create(:user,
+      first_name: 'Jim',
+      last_name: 'Morrison',
+      email: 'jim_morrison@gmail.com',
+      nickname: 'Jimmo',
+      password: 'Jimpass'
+    ) }
+    let!(:post) { FactoryBot.create(:post, title: 'The Silver Logic', content: 'I want to work for you', user_id: user.id) }
+    let(:token) { AuthenticationTokenService.encode(user.id) }
+
+    it 'update an existing post' do
+      put "/api/v1/posts/#{post.id}", params: {
+        post: { title: 'TSL', content: 'Am I passing the test?', user_id: user.id }
+      }, headers: {
+        'Authorization' => "Bearer #{token}"
+      }
+
+
+      updated_post = Post.find(post.id)
+
+      expect(response).to have_http_status(:created)
+      expect(updated_post.title).to eq('TSL')
+      expect(updated_post.content).to eq('Am I passing the test?')
+    end
+
+    context 'missing Authorization header' do
+      it 'returns status 401' do
+        put '/api/v1/posts/1', params: {}, headers: {}
+
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
 end
