@@ -3,52 +3,49 @@ module Api
     class PostsController < ApplicationController
       include ActionController::HttpAuthentication::Token
 
-      before_action :authenticate_user, only: [:create_post, :delete_post]
+      before_action :authenticate_user, only: [:create_post, :delete_post, :update_post]
 
       def get_posts_list
-        posts = PostsService.get_posts()
-
-        render json: PostsRepresenter.new(posts).as_json
+        posts = Posts::ListService.new.call()
+        render json: posts
+      rescue Posts::ListService::InvalidError => error
+        render_error(error, :unprocessable_entity)
       end
     
       def create_post
-        post = PostsService.new_post(post_params)
-      
-        if post.save
-          render json: post, status: :created
-        else
-          render json: post.errors, status: :unprocessable_entity
-        end
+        user = Users::FindService.new.by_id(user_id)
+        post = Posts::CreateService.new.call(user, post_params)
+        render json: post, status: :created
+      rescue Posts::CreateService::InvalidError => error
+        render_error(error, :unprocessable_entity)
       end
     
       def delete_post
-        post = PostsService.find_by_id(params[:id]).destroy!
-        post.destroy!
+        Posts::DeleteService.new.call(params[:post_id])
+        head :ok
+      rescue Posts::DeleteService::InvalidError
+        render_error(error, :unprocessable_entity)
+      end
 
-        head :no_content
+      def update_post
+        user = Users::FindService.new.by_id(user_id)
+        Posts::UpdateService.new.call(user, params[:post_id], post_params)
+        head :created
+      rescue Posts::UpdateService::InvalidError
+        render_error(error, :unprocessable_entity)
       end
 
       private
 
       def post_params
         request_params = params.require(:post).permit(:title, :content)
-        request_params.merge(user_id: user_id)
       end
 
       def authenticate_user
         # Authorization: Bearer <token>
-        UserService.find_by_id(user_id)
-      rescue ActiveRecord::RecordNotFound, JWT::DecodeError
+        Users::FindService.new.by_id(user_id)
+      rescue ActiveRecord::RecordNotFound, AuthenticationTokenService::StandardError
         render status: :unauthorized
-      end
-
-      def token
-        token, _options = token_and_options(request)
-        @token ||= token
-      end
-
-      def user_id
-        @user_id ||= AuthenticationTokenService.decode(token) unless token.nil?
       end
     end
   end

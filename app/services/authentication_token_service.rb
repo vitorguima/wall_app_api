@@ -1,4 +1,3 @@
-
 class AuthenticationTokenService
   HMAC_SECRET = ENV['HMAC_SECRET']
   ALGORITHM_TYPE = ENV['ALGORITHM_TYPE']
@@ -17,5 +16,9 @@ class AuthenticationTokenService
       { algorithm: ALGORITHM_TYPE }
     )
     decoded_token[0]['user_id']
+  rescue ActiveRecord::RecordInvalid, JWT::DecodeError => error
+    raise InvalidError, error.message
   end
-end 
+
+  class InvalidError < StandardError; end
+end

@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 describe 'User register', type: :request do
-  describe 'POST /user' do
+  describe 'POST /users' do
     it 'Creates a new user' do
       expect {
-        post '/api/v1/user', params: {
+        post '/api/v1/users', params: {
           user: {
             first_name: 'first_name',
             last_name: 'last_name',
@@ -28,7 +28,7 @@ describe 'User register', type: :request do
       ) }
 
       it 'return status 422' do
-        post '/api/v1/user', params: {
+        post '/api/v1/users', params: {
           user: {
             first_name: 'Jim',
             last_name: 'Morrison',
@@ -40,7 +40,7 @@ describe 'User register', type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         response_body = JSON.parse(response.body)
-        expect(response_body).to eq({'email' => ['has already been taken']})
+        expect(response_body).to eq({ "error" => { "message" => "Validation failed: Email has already been taken" } })
       end
     end
 
@@ -54,7 +54,7 @@ describe 'User register', type: :request do
       ) }
 
       it 'return status 422' do
-        post '/api/v1/user', params: {
+        post '/api/v1/users', params: {
           user: {
             first_name: 'Hommer',
             last_name: 'Simpsons',
@@ -66,7 +66,7 @@ describe 'User register', type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         response_body = JSON.parse(response.body)
-        expect(response_body).to eq({'nickname' => ['has already been taken']})
+        expect(response_body).to eq({ "error" => { "message" => "Validation failed: Nickname has already been taken" } })
       end
     end
   end
@@ -88,7 +88,7 @@ describe 'User register', type: :request do
 
     it 'Deletes an existing user' do
       expect {
-        delete "/api/v1/user/", 
+        delete "/api/v1/users", 
         headers: {
           'Authorization' => "Bearer #{token}",
         }
@@ -97,7 +97,7 @@ describe 'User register', type: :request do
 
     it 'Deletes associated posts' do
       expect {
-        delete "/api/v1/user/", 
+        delete "/api/v1/users", 
         headers: {
           'Authorization' => "Bearer #{token}",
         }
