@@ -108,7 +108,6 @@ describe 'Posts API', type: :request do
         'Authorization' => "Bearer #{token}"
       }
 
-
       updated_post = Post.find(post.id)
 
       expect(response).to have_http_status(:created)
