@@ -15,6 +15,12 @@ module Api
         render json: { token: token }, status: :created
       end
 
+      def token_validation
+        render json: { token: user_id }, status: :ok
+      rescue AuthenticationTokenService::InvalidError
+        head :unauthorized
+      end
+
       private
 
       def user

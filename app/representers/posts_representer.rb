@@ -12,6 +12,7 @@ class PostsRepresenter
         author_nickname: post.user.nickname,
         created_at: post.created_at,
         updated_at: post.updated_at,
+        user_id: post.user.id,
       }
     end
   end
