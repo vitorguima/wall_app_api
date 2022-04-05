@@ -18,7 +18,7 @@ RSpec.describe UserMailer, type: :mailer do
     end
 
     it 'renders the body' do
-      expect(email.body.encoded).to include("Welcome to the Wall app!, #{user.first_name}")
+      expect(email.body.encoded).to include("Welcome to the Wall app, #{user.first_name}!")
       expect(email.body.encoded).to include("your login name is: #{user.email}")
       expect(email.body.encoded).to include("To login to the site, just follow this link:")
       expect(email.body.encoded).to include("Thanks for joining and have a great day!")
