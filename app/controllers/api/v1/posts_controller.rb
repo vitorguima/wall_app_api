@@ -3,7 +3,7 @@ module Api
     class PostsController < ApplicationController
       include ActionController::HttpAuthentication::Token
 
-      before_action :authenticate_user, only: [:create_post, :delete_post, :update_post]
+      before_action :authenticate_user, only: [:create_post, :delete_post, :update_post, :list_by_user]
 
       def get_posts_list
         posts = Posts::ListService.new.call()
@@ -13,8 +13,7 @@ module Api
       end
     
       def create_post
-        user = Users::FindService.new.by_id(user_id)
-        post = Posts::CreateService.new.call(user, post_params)
+        post = Posts::CreateService.new.call(user_id, post_params)
         render json: post, status: :created
       rescue Posts::CreateService::InvalidError => error
         render_error(error, :unprocessable_entity)
@@ -28,10 +27,16 @@ module Api
       end
 
       def update_post
-        user = Users::FindService.new.by_id(user_id)
-        Posts::UpdateService.new.call(user, params[:post_id], post_params)
+        Posts::UpdateService.new.call(user_id, params[:post_id], post_params)
         head :created
       rescue Posts::UpdateService::InvalidError
+        render_error(error, :unprocessable_entity)
+      end
+
+      def list_by_user
+        posts = Posts::FindByUserService.new.call(user_id)
+        render json: posts, status: :ok
+      rescue Posts::FindByUserService::InvalidError
         render_error(error, :unprocessable_entity)
       end
 
@@ -42,7 +47,6 @@ module Api
       end
 
       def authenticate_user
-        # Authorization: Bearer <token>
         Users::FindService.new.by_id(user_id)
       rescue ActiveRecord::RecordNotFound, AuthenticationTokenService::InvalidError
         render status: :unauthorized
