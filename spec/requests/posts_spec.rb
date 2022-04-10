@@ -21,10 +21,10 @@ describe 'Posts API', type: :request do
   
       expect(response).to have_http_status(:success)
       expect(response_body.size).to eq(2)
-      expect(response_first_item['title']).to eq(first_post.title)
-      expect(response_first_item['content']).to eq(first_post.content)
-      expect(response_second_item['title']).to eq(second_post.title)
-      expect(response_second_item['content']).to eq(second_post.content)
+      expect(response_first_item['title']).to eq(second_post.title)
+      expect(response_first_item['content']).to eq(second_post.content)
+      expect(response_second_item['title']).to eq(first_post.title)
+      expect(response_second_item['content']).to eq(first_post.content)
     end
   end
 

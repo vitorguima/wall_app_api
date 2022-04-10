@@ -1,7 +1,7 @@
 module Posts
   class ListService
     def call
-      posts = Post.all
+      posts = Post.order(created_at: :desc)
       PostsRepresenter.new(posts).as_json
     rescue ActiveRecord::RecordInvalid
       raise InvalidError, post.errors
