@@ -4,7 +4,13 @@
 
 * [Link to Production environment](https://www.wall-app-api.herokuapp.com/)
 
-## How to run this project on your computer
+## How to run this project on your local environment
+
+### Clone this repository to your local environment:
+
+```bash
+git clone git@github.com:vitorguima/wall_app_api.git
+```
 
 ### Before running the project, certify you have the necessary dependencies installed in your computer:
 
@@ -18,7 +24,18 @@
 * Access the project's root folder, open a new terminal and run the following command: ``` bundle install```
 * After installing the project's dependencies, run: ```bin/rails start```
 
-## How does wall api works
+## Tests
+The tests are of the integration type. Those were written to validate the behavior of the application for the different endpoints of this API.
+As the tests validates the request flow and it's outputs, all of those are based on the expectations for each endpoint and the tested http method.
+
+### To run the tests:
+Open a new bash inside the project's root folder and run the command below:
+
+```bash
+rspec spec --format documentation
+```
+
+## How does Wall API works
 
 ### Registering
 The first step to use the Wall API is to create a user by sending a request to the following endpoint:
@@ -37,12 +54,18 @@ All available endpoints and it's required parameters are documented in the link 
 
 * [Postman Collection](https://documenter.getpostman.com/view/17493490/UVyswbBW)
 
-## Endpoints collection
-
-## Tests
-```bash
-rspec spec --format documentation
-```
-
 ## External libraries
-* 
+
+* [bcrypt](https://github.com/bcrypt-ruby/bcrypt-ruby): to encode passwords.
+* [JWT](https://github.com/jwt/ruby-jwt): to handle access tokens.
+* [rspec](https://github.com/rspec/rspec-rails): to implement tests.
+* [dotenv](https://github.com/bkeepers/dotenv): to import environment variables from .env.
+* [Factory bot](https://github.com/thoughtbot/factory_bot): support for multiple build strategies (saved instances, unsaved instances, attribute hashes, and stubbed objects).
+
+## Concerns
+* Endpoints that retrieves a generic list with no pagination rule. If this list increase too much, the API will always be retrieving all the data from the database and consuming a lot of resource.
+* It's possible to register a new user with a fake email (there's no validation service for that)
+* The mailer service is using my personal email (no service like sendgrid was used on this pilot)
+
+## Thank you!
+Thanks for the opportunity of building this app, TSL! I hope you like the results!
