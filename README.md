@@ -2,7 +2,7 @@
 
 ## API deploy at Heroku:
 
-* [Link to Production environment](https://www.wall-app-api.herokuapp.com/)
+* [Link to Production environment](https://wall-app-api.herokuapp.com/)
 
 ## How to run this project on your local environment
 
