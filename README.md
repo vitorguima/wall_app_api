@@ -1,4 +1,5 @@
 # Wall app API
+The Wall API serves the backend for the [Wall client](https://github.com/vitorguima/wal_app_frontend). This API enable users to create, delete, update and read posts.
 
 ## API deploy at Heroku:
 
