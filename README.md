@@ -67,6 +67,3 @@ All available endpoints and it's required parameters are documented in the link 
 * Endpoints that retrieves a generic list with no pagination rule. If this list increase too much, the API will always be retrieving all the data from the database and consuming a lot of resource.
 * It's possible to register a new user with a fake email (there's no validation service for that)
 * The mailer service is using my personal email (no service like sendgrid was used on this pilot)
-
-## Thank you!
-Thanks for the opportunity of building this app, TSL! I hope you like the results!
