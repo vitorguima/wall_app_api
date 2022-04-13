@@ -4,9 +4,10 @@ class User < ApplicationRecord
 
   validates :first_name, presence: true
   validates :last_name, presence: true
-  validates :nickname, presence: true, uniqueness: true
+  validates :nickname, presence: true, uniqueness: true, length: { minimum: 5, maximum: 15 }
   validates :email, presence: true, uniqueness: true
   validate :email_format
+  validates :password, length: { minimum: 7, maximum: 15 }
 
   after_destroy :destroy_posts
 
