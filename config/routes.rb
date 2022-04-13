@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       delete '/users' => 'users#delete_user'
 
       post '/authenticate' => 'authentication#create'
-      post '/token' => 'authentication#token_validation'
+      get '/token' => 'authentication#token_validation'
     end
   end
 end

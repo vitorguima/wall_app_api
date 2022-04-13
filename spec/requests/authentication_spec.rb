@@ -21,6 +21,15 @@ describe 'Authentication', type: :request do
       expect(response_body['token']).to eq(token)
     end
 
+    it 'validates the token authenticity' do
+      get '/api/v1/token', headers: { 'Authorization': "Bearer #{token}" }
+
+      expect(response).to have_http_status(:ok)
+
+      response_body = JSON.parse(response.body)
+      expect(response_body['token']).to eq(user.id)
+    end
+
     it 'returns error when username is missing' do
       post '/api/v1/authenticate', params: { password: user.password }
 
