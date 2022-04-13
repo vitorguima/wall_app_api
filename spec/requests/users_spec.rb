@@ -49,7 +49,7 @@ describe 'User register', type: :request do
         first_name: 'Jim',
         last_name: 'Morrison',
         email: 'jim_morrison2@gmail.com',
-        nickname: 'Jim',
+        nickname: 'Jimalready',
         password: 'Jimpass'
       ) }
 
@@ -59,7 +59,7 @@ describe 'User register', type: :request do
             first_name: 'Hommer',
             last_name: 'Simpsons',
             email: 'hommersimpsons@gmail.com',
-            nickname: 'Jim',
+            nickname: 'Jimalready',
             password: 'Jimpass'
           }
         }
@@ -67,6 +67,70 @@ describe 'User register', type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
         response_body = JSON.parse(response.body)
         expect(response_body).to eq({ "error" => { "message" => "Validation failed: Nickname has already been taken" } })
+      end
+    end
+
+    context 'nickname length is smaller than 5' do
+      it 'return status 422' do
+        post '/api/v1/users', params: {
+          user: {
+            first_name: 'first_name',
+            last_name: 'last_name',
+            email: 'email@email.com',
+            nickname: 'nic',
+            password: 'password',
+          }
+        }
+  
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'nickname length is higher than 15' do
+      it 'return status 422' do
+        post '/api/v1/users', params: {
+          user: {
+            first_name: 'first_name',
+            last_name: 'last_name',
+            email: 'email@email.com',
+            nickname: 'nicishigherthan15',
+            password: 'password',
+          }
+        }
+  
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'password length is smaller than 7' do
+      it 'return status 422' do
+        post '/api/v1/users', params: {
+          user: {
+            first_name: 'first_name',
+            last_name: 'last_name',
+            email: 'email@email.com',
+            nickname: 'nicishigherthan15',
+            password: 'passwo',
+          }
+        }
+  
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'password length is bigger than 20' do
+      it 'return status 422' do
+        post '/api/v1/users', params: {
+          user: {
+            first_name: 'first_name',
+            last_name: 'last_name',
+            email: 'email@email.com',
+            nickname: 'nicishigherthan15',
+            password: 'passwordismuchbiggerthan20',
+          }
+        }
+  
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end
