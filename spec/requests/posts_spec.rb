@@ -57,6 +57,17 @@ describe 'Posts API', type: :request do
         expect(response).to have_http_status(:unauthorized)
       end
     end
+
+    context 'missing body params' do
+      it 'returns status 422' do
+        post '/api/v1/posts', params: {
+          post: { title: '', content: '', user_id: user.id }
+        }, headers: {
+          'Authorization' => "Bearer #{token}"
+        }
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
   end
 
   describe 'DELETE /posts/:id' do
