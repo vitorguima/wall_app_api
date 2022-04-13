@@ -23,7 +23,7 @@ git clone git@github.com:vitorguima/wall_app_api.git
 
 * Create a ```.env``` file inside the project's root folder with the same variables that have been defined in the [.env.example](https://github.com/vitorguima/wall_app_api/blob/1c7e59d2a292881418ce437d5f31d79bf32f5cf1/.env.example) file.
 * Access the project's root folder, open a new terminal and run the following command: ``` bundle install```
-* After installing the project's dependencies, run: ```bin/rails start```
+* After installing the project's dependencies, run: ```bin/rails s```
 
 ## Tests
 The tests are of the integration type. Those were written to validate the behavior of the application for the different endpoints of this API.
